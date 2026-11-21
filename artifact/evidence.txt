@@ -1,0 +1,12 @@
+turing increment SUBLEQ lowering — verification evidence
+exhaustive inputs tested: 256 (all 8-bit values 0..255)
+SUBLEQ vs reference mismatches: 0
+reference vs n+1 mismatches: 0
+reference: turing-increment-ref (Twelf turing.elf semantics)
+machine: subleq-isa-racket machine.rkt (Racket simulator)
+image cells: 276 (code 246 + data 30)
+image sha256: fe289e0931f7bd3a19fe394422213400986fb846b2094700b70914765340d099
+Rosette/Z3 properties: delta totality/determinism PROVED, halt-is-identity PROVED, increment-for-all-8-bit-n PROVED
+note: exhaustive equivalence holds within the tested machine model.
+A formal refinement proof that the VHDL SUBLEQ hardware faithfully
+implements this model is a separate, still-required step.
