@@ -44,6 +44,4 @@ Racket is at `~/workspace/.tools/racket/bin/racket`.
 - `racket rosette_check.rkt`: the three Rosette/Z3 proofs.
 - `racket verify.rkt`: everything, regenerates `artifact/`.
 
-See `STATUS.md` for the full evidence, including the fall-through bug
-caught by execution and the Rosette encoding error that first made the
-increment proof report FAILED.
+See `STATUS.md` for the full evidence and open obligations.
