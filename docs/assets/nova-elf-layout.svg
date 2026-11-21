@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="720" viewBox="0 0 1080 720" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <rect width="1080" height="720" fill="#0d1117"/>
+  <text x="540" y="40" text-anchor="middle" font-size="24" font-weight="bold" fill="#e6edf3">NOVA-ELF Representation</text>
+  <text x="540" y="66" text-anchor="middle" font-size="14" fill="#8b949e">ELF64 · ET_REL · e_machine 0xFF01 (EM_NOVA_SUBLEQ) · 2,672 bytes · e_entry 0 · e_shoff 2032</text>
+
+  <!-- ELF header -->
+  <rect x="60" y="90" width="960" height="52" rx="6" fill="#161b22" stroke="#e6edf3" stroke-width="1.5"/>
+  <text x="540" y="112" text-anchor="middle" font-size="14" font-weight="bold" fill="#e6edf3">ELF header — 64 bytes, offset 0</text>
+  <text x="540" y="132" text-anchor="middle" font-size="12" fill="#8b949e">7F 45 4C 46 · class 2 (ELF64) · data 1 (little-endian) · version 1 · e_type 1 (ET_REL) · e_machine 0xFF01</text>
+
+  <!-- sections -->
+  <g font-size="12">
+    <rect x="60" y="160" width="960" height="46" rx="4" fill="#1f6feb" stroke="#58a6ff"/>
+    <text x="80" y="180" fill="#ffffff" font-weight="bold">.nova.text</text>
+    <text x="80" y="198" fill="#c9d1d9">code — 246 cells × 4 B = 984 B</text>
+    <text x="1000" y="180" text-anchor="end" fill="#ffffff">offset 64</text>
+    <text x="1000" y="198" text-anchor="end" fill="#c9d1d9">size 984 · align 4 · flags 6 (AX)</text>
+
+    <rect x="60" y="212" width="960" height="46" rx="4" fill="#238636" stroke="#3fb950"/>
+    <text x="80" y="232" fill="#ffffff" font-weight="bold">.nova.data</text>
+    <text x="80" y="250" fill="#c9d1d9">data — 30 cells × 4 B = 120 B (ptr, state, tape, guard, reserved)</text>
+    <text x="1000" y="232" text-anchor="end" fill="#ffffff">offset 1048</text>
+    <text x="1000" y="250" text-anchor="end" fill="#c9d1d9">size 120 · align 4 · flags 3 (WA)</text>
+
+    <rect x="60" y="264" width="960" height="46" rx="4" fill="#8957e5" stroke="#bc8cff"/>
+    <text x="80" y="284" fill="#ffffff" font-weight="bold">.nova.rodata</text>
+    <text x="80" y="302" fill="#c9d1d9">standard AES S-box, 256 bytes — format constant table, unused by this program</text>
+    <text x="1000" y="284" text-anchor="end" fill="#ffffff">offset 1168</text>
+    <text x="1000" y="302" text-anchor="end" fill="#c9d1d9">size 256 · align 1 · flags 2 (A)</text>
+
+    <rect x="60" y="316" width="960" height="46" rx="4" fill="#9e6a03" stroke="#d29922"/>
+    <text x="80" y="336" fill="#ffffff" font-weight="bold">.nova.urom</text>
+    <text x="80" y="354" fill="#c9d1d9">self-attesting descriptor, 52 B — version 1 · SHA-256(image) · 4 dispatch words</text>
+    <text x="1000" y="336" text-anchor="end" fill="#ffffff">offset 1424</text>
+    <text x="1000" y="354" text-anchor="end" fill="#c9d1d9">size 52 · align 4 · flags 2 (A)</text>
+
+    <rect x="60" y="368" width="960" height="46" rx="4" fill="#161b22" stroke="#30363d"/>
+    <text x="80" y="388" fill="#e6edf3" font-weight="bold">.nova.proof</text>
+    <text x="80" y="406" fill="#8b949e">proof JSON — exhaustive + Rosette claims, image SHA-256</text>
+    <text x="1000" y="388" text-anchor="end" fill="#e6edf3">offset 1476</text>
+    <text x="1000" y="406" text-anchor="end" fill="#8b949e">size 229 · align 1 · flags 0</text>
+
+    <rect x="60" y="420" width="960" height="46" rx="4" fill="#161b22" stroke="#30363d"/>
+    <text x="80" y="440" fill="#e6edf3" font-weight="bold">.nova.codec</text>
+    <text x="80" y="458" fill="#8b949e">codec identifier string — “NOVA-BASE256 v1”</text>
+    <text x="1000" y="440" text-anchor="end" fill="#e6edf3">offset 1705</text>
+    <text x="1000" y="458" text-anchor="end" fill="#8b949e">size 15 · align 1 · flags 0</text>
+
+    <rect x="60" y="472" width="960" height="46" rx="4" fill="#161b22" stroke="#30363d"/>
+    <text x="80" y="492" fill="#e6edf3" font-weight="bold">.nova.dag</text>
+    <text x="80" y="510" fill="#8b949e">DAG node JSON — schema rijndael.dag.v1, id turing.increment.v1, parent turing.elf</text>
+    <text x="1000" y="492" text-anchor="end" fill="#e6edf3">offset 1720</text>
+    <text x="1000" y="510" text-anchor="end" fill="#8b949e">size 113 · align 1 · flags 0</text>
+
+    <rect x="60" y="524" width="960" height="46" rx="4" fill="#161b22" stroke="#30363d"/>
+    <text x="80" y="544" fill="#e6edf3" font-weight="bold">.note.nova</text>
+    <text x="80" y="562" fill="#8b949e">ELF note, type 1 — name “NOVA”, desc “NOVA-ELF v1; ISA SUBLEQ; ABI word=32-bit signed LE; entry=0; halt=explicit”</text>
+    <text x="1000" y="544" text-anchor="end" fill="#e6edf3">offset 1836</text>
+    <text x="1000" y="562" text-anchor="end" fill="#8b949e">size 92 · align 4 · type 7 (NOTE)</text>
+
+    <rect x="60" y="576" width="960" height="46" rx="4" fill="#161b22" stroke="#30363d"/>
+    <text x="80" y="596" fill="#e6edf3" font-weight="bold">.shstrtab</text>
+    <text x="80" y="614" fill="#8b949e">section-name string table, 102 bytes</text>
+    <text x="1000" y="596" text-anchor="end" fill="#e6edf3">offset 1928</text>
+    <text x="1000" y="614" text-anchor="end" fill="#8b949e">size 102 · align 1 · type 3 (STRTAB)</text>
+  </g>
+
+  <!-- section header table -->
+  <rect x="60" y="640" width="960" height="46" rx="6" fill="#161b22" stroke="#e6edf3" stroke-width="1.5"/>
+  <text x="540" y="662" text-anchor="middle" font-size="14" font-weight="bold" fill="#e6edf3">Section header table — offset 2032, 10 entries × 64 bytes = 640 bytes</text>
+  <text x="540" y="682" text-anchor="middle" font-size="12" fill="#8b949e">NULL + 8 sections + .shstrtab · e_shnum 10 · e_shstrndx 9 · file ends at 2032 + 640 = 2672</text>
+</svg>

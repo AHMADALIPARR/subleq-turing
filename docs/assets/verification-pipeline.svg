@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="660" viewBox="0 0 1180 660" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#58a6ff"/>
+    </marker>
+    <marker id="arrG" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#3fb950"/>
+    </marker>
+    <marker id="arrR" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#f85149"/>
+    </marker>
+  </defs>
+  <rect width="1180" height="660" fill="#0d1117"/>
+  <text x="590" y="40" text-anchor="middle" font-size="24" font-weight="bold" fill="#e6edf3">Verification Architecture</text>
+  <text x="590" y="66" text-anchor="middle" font-size="14" fill="#8b949e">Three independent checks, each over a different representation, chained into one equivalence</text>
+
+  <!-- left column: models -->
+  <rect x="30" y="100" width="340" height="130" rx="8" fill="#161b22" stroke="#bc8cff" stroke-width="1.5"/>
+  <text x="200" y="128" text-anchor="middle" font-size="15" font-weight="bold" fill="#bc8cff">Twelf delta table</text>
+  <text x="200" y="152" text-anchor="middle" font-size="12" fill="#e6edf3">fibonacci-engine turing.elf</text>
+  <text x="200" y="174" text-anchor="middle" font-size="12" fill="#e6edf3">6 rules, zipper tape, classify</text>
+  <text x="200" y="196" text-anchor="middle" font-size="11" fill="#8b949e">specification (not imported)</text>
+  <text x="200" y="214" text-anchor="middle" font-size="11" fill="#8b949e">proof terms not checked here</text>
+
+  <rect x="30" y="280" width="340" height="130" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="200" y="308" text-anchor="middle" font-size="15" font-weight="bold" fill="#58a6ff">Racket reference model</text>
+  <text x="200" y="332" text-anchor="middle" font-size="12" fill="#e6edf3">turing.rkt: tm-step-ref</text>
+  <text x="200" y="354" text-anchor="middle" font-size="12" fill="#e6edf3">turing-run-ref, turing-increment-ref</text>
+  <text x="200" y="376" text-anchor="middle" font-size="11" fill="#8b949e">17-cell vector, guard + 16 cells</text>
+  <text x="200" y="394" text-anchor="middle" font-size="11" fill="#8b949e">direct transcription of delta</text>
+
+  <rect x="30" y="460" width="340" height="130" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="200" y="488" text-anchor="middle" font-size="15" font-weight="bold" fill="#3fb950">SUBLEQ program</text>
+  <text x="200" y="512" text-anchor="middle" font-size="12" fill="#e6edf3">turing.rkt: turing-items</text>
+  <text x="200" y="534" text-anchor="middle" font-size="12" fill="#e6edf3">276-cell image, assembled</text>
+  <text x="200" y="556" text-anchor="middle" font-size="11" fill="#8b949e">run by machine.rkt interpreter</text>
+  <text x="200" y="574" text-anchor="middle" font-size="11" fill="#8b949e">run-turing, run-turing-all</text>
+
+  <!-- middle column: checks -->
+  <rect x="430" y="100" width="320" height="130" rx="8" fill="#161b22" stroke="#f85149" stroke-width="1.5"/>
+  <text x="590" y="128" text-anchor="middle" font-size="15" font-weight="bold" fill="#f85149">Rosette + Z3</text>
+  <text x="590" y="152" text-anchor="middle" font-size="12" fill="#e6edf3">rosette_check.rkt</text>
+  <text x="590" y="174" text-anchor="middle" font-size="12" fill="#e6edf3">symbolic 8-bit n, 20 unrolls</text>
+  <text x="590" y="196" text-anchor="middle" font-size="11" fill="#8b949e">delta totality / determinism</text>
+  <text x="590" y="214" text-anchor="middle" font-size="11" fill="#8b949e">halt is identity · increment</text>
+
+  <rect x="430" y="280" width="320" height="130" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="590" y="308" text-anchor="middle" font-size="15" font-weight="bold" fill="#58a6ff">Exhaustive execution</text>
+  <text x="590" y="332" text-anchor="middle" font-size="12" fill="#e6edf3">verify.rkt, run-turing-all</text>
+  <text x="590" y="354" text-anchor="middle" font-size="12" fill="#e6edf3">all 256 inputs, 0..255</text>
+  <text x="590" y="376" text-anchor="middle" font-size="11" fill="#8b949e">SUBLEQ vs reference</text>
+  <text x="590" y="394" text-anchor="middle" font-size="11" fill="#8b949e">reference vs n + 1</text>
+
+  <rect x="430" y="460" width="320" height="130" rx="8" fill="#161b22" stroke="#d29922" stroke-width="1.5"/>
+  <text x="590" y="488" text-anchor="middle" font-size="15" font-weight="bold" fill="#d29922">ELF round-trip</text>
+  <text x="590" y="512" text-anchor="middle" font-size="12" fill="#e6edf3">verify.rkt + package.rkt</text>
+  <text x="590" y="534" text-anchor="middle" font-size="12" fill="#e6edf3">Load(ELF(M)) = M</text>
+  <text x="590" y="556" text-anchor="middle" font-size="11" fill="#8b949e">HEX16 / BASE64 / BASE32 codecs</text>
+  <text x="590" y="574" text-anchor="middle" font-size="11" fill="#8b949e">ROMHEX round-trip, 276 lines</text>
+
+  <!-- right column: conclusion -->
+  <rect x="810" y="220" width="340" height="220" rx="8" fill="#161b22" stroke="#e6edf3" stroke-width="1.5"/>
+  <text x="980" y="248" text-anchor="middle" font-size="15" font-weight="bold" fill="#e6edf3">Chained equivalence</text>
+  <text x="980" y="276" text-anchor="middle" font-size="13" fill="#e6edf3">SUBLEQ program</text>
+  <text x="980" y="298" text-anchor="middle" font-size="13" fill="#3fb950">＝ reference machine</text>
+  <text x="980" y="320" text-anchor="middle" font-size="12" fill="#8b949e">(exhaustive, 256 inputs)</text>
+  <text x="980" y="346" text-anchor="middle" font-size="13" fill="#e6edf3">reference machine</text>
+  <text x="980" y="368" text-anchor="middle" font-size="13" fill="#f85149">＝ increment, all 8-bit n</text>
+  <text x="980" y="390" text-anchor="middle" font-size="12" fill="#8b949e">(symbolic proof, Rosette/Z3)</text>
+  <text x="980" y="416" text-anchor="middle" font-size="13" fill="#e6edf3">therefore the SUBLEQ image</text>
+  <text x="980" y="434" text-anchor="middle" font-size="13" fill="#e6edf3">increments every 8-bit input</text>
+
+  <!-- arrows -->
+  <line x1="370" y1="150" x2="428" y2="150" stroke="#f85149" stroke-width="2" marker-end="url(#arrR)"/>
+  <text x="399" y="138" text-anchor="middle" font-size="11" fill="#8b949e">delta</text>
+  <line x1="370" y1="345" x2="428" y2="345" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="399" y="333" text-anchor="middle" font-size="11" fill="#8b949e">runs</text>
+  <line x1="370" y1="525" x2="428" y2="525" stroke="#d29922" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="399" y="513" text-anchor="middle" font-size="11" fill="#8b949e">packs</text>
+  <line x1="750" y1="165" x2="808" y2="250" stroke="#f85149" stroke-width="2" marker-end="url(#arrR)"/>
+  <line x1="750" y1="345" x2="808" y2="330" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="750" y1="525" x2="808" y2="400" stroke="#d29922" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="200" y1="230" x2="200" y2="278" stroke="#bc8cff" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="200" y1="410" x2="200" y2="458" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+
+  <text x="590" y="640" text-anchor="middle" font-size="12" fill="#8b949e">Scope: equivalence holds within the tested Racket machine model. Hardware refinement (VHDL SUBLEQ core) is a separate, pending obligation.</text>
+</svg>

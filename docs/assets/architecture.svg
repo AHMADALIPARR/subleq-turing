@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="700" viewBox="0 0 1240 700" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#58a6ff"/>
+    </marker>
+    <marker id="arrG" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#3fb950"/>
+    </marker>
+    <marker id="arrO" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#d29922"/>
+    </marker>
+  </defs>
+  <rect width="1240" height="700" fill="#0d1117"/>
+  <text x="620" y="40" text-anchor="middle" font-size="24" font-weight="bold" fill="#e6edf3">subleq-turing — Complete Architecture</text>
+  <text x="620" y="66" text-anchor="middle" font-size="14" fill="#8b949e">Twelf specification → Racket lowering → SUBLEQ program → interpreter → verification → NOVA-ELF</text>
+
+  <!-- Row 1: source to program -->
+  <g>
+    <rect x="30" y="110" width="220" height="120" rx="8" fill="#161b22" stroke="#bc8cff" stroke-width="1.5"/>
+    <text x="140" y="138" text-anchor="middle" font-size="15" font-weight="bold" fill="#bc8cff">Twelf specification</text>
+    <text x="140" y="162" text-anchor="middle" font-size="12" fill="#e6edf3">fibonacci-engine</text>
+    <text x="140" y="180" text-anchor="middle" font-size="12" fill="#e6edf3">elf/transitions/turing.elf</text>
+    <text x="140" y="202" text-anchor="middle" font-size="11" fill="#8b949e">6 delta rules, zipper tape,</text>
+    <text x="140" y="218" text-anchor="middle" font-size="11" fill="#8b949e">states scan / carry / halt</text>
+
+    <rect x="310" y="110" width="240" height="120" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+    <text x="430" y="138" text-anchor="middle" font-size="15" font-weight="bold" fill="#58a6ff">turing.rkt</text>
+    <text x="430" y="162" text-anchor="middle" font-size="12" fill="#e6edf3">reference model + emitter</text>
+    <text x="430" y="180" text-anchor="middle" font-size="12" fill="#e6edf3">tm-step-ref, turing-items</text>
+    <text x="430" y="202" text-anchor="middle" font-size="11" fill="#8b949e">tape: 16 cells + guard blank</text>
+    <text x="430" y="218" text-anchor="middle" font-size="11" fill="#8b949e">head: pointer cell, patchable triples</text>
+
+    <rect x="610" y="110" width="220" height="120" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+    <text x="720" y="138" text-anchor="middle" font-size="15" font-weight="bold" fill="#3fb950">SUBLEQ image</text>
+    <text x="720" y="162" text-anchor="middle" font-size="12" fill="#e6edf3">276 cells</text>
+    <text x="720" y="180" text-anchor="middle" font-size="12" fill="#e6edf3">246 code + 30 data</text>
+    <text x="720" y="202" text-anchor="middle" font-size="11" fill="#8b949e">SHA-256 fe289e09…40d099</text>
+    <text x="720" y="218" text-anchor="middle" font-size="11" fill="#8b949e">one instruction, triples of cells</text>
+
+    <rect x="890" y="110" width="220" height="120" rx="8" fill="#161b22" stroke="#d29922" stroke-width="1.5"/>
+    <text x="1000" y="138" text-anchor="middle" font-size="15" font-weight="bold" fill="#d29922">machine.rkt</text>
+    <text x="1000" y="162" text-anchor="middle" font-size="12" fill="#e6edf3">SUBLEQ interpreter</text>
+    <text x="1000" y="180" text-anchor="middle" font-size="12" fill="#e6edf3">65,536 cells, PC, status</text>
+    <text x="1000" y="202" text-anchor="middle" font-size="11" fill="#8b949e">mem[b] −= mem[a]; if ≤ 0, PC ← c</text>
+    <text x="1000" y="218" text-anchor="middle" font-size="11" fill="#8b949e">else PC ← PC + 3</text>
+
+    <line x1="250" y1="170" x2="308" y2="170" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+    <text x="279" y="158" text-anchor="middle" font-size="11" fill="#8b949e">transcribe</text>
+    <line x1="550" y1="170" x2="608" y2="170" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+    <text x="579" y="158" text-anchor="middle" font-size="11" fill="#8b949e">assemble</text>
+    <line x1="830" y1="170" x2="888" y2="170" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+    <text x="859" y="158" text-anchor="middle" font-size="11" fill="#8b949e">load + run</text>
+  </g>
+
+  <!-- Row 2: observation -->
+  <g>
+    <rect x="30" y="300" width="220" height="120" rx="8" fill="#161b22" stroke="#39c5cf" stroke-width="1.5"/>
+    <text x="140" y="328" text-anchor="middle" font-size="15" font-weight="bold" fill="#39c5cf">trace.rkt / measure.rkt</text>
+    <text x="140" y="352" text-anchor="middle" font-size="12" fill="#e6edf3">Turing-level trace</text>
+    <text x="140" y="370" text-anchor="middle" font-size="12" fill="#e6edf3">step counts, image size</text>
+    <text x="140" y="392" text-anchor="middle" font-size="11" fill="#8b949e">247 – 580 SUBLEQ steps</text>
+    <text x="140" y="408" text-anchor="middle" font-size="11" fill="#8b949e">over 256 inputs</text>
+
+    <rect x="310" y="300" width="240" height="120" rx="8" fill="#161b22" stroke="#f85149" stroke-width="1.5"/>
+    <text x="430" y="328" text-anchor="middle" font-size="15" font-weight="bold" fill="#f85149">rosette_check.rkt + Z3</text>
+    <text x="430" y="352" text-anchor="middle" font-size="12" fill="#e6edf3">symbolic proofs</text>
+    <text x="430" y="370" text-anchor="middle" font-size="12" fill="#e6edf3">delta totality / determinism</text>
+    <text x="430" y="392" text-anchor="middle" font-size="11" fill="#8b949e">halt is identity</text>
+    <text x="430" y="408" text-anchor="middle" font-size="11" fill="#8b949e">increment, all 8-bit n (20 unrolls)</text>
+
+    <rect x="610" y="300" width="220" height="120" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+    <text x="720" y="328" text-anchor="middle" font-size="15" font-weight="bold" fill="#3fb950">verify.rkt</text>
+    <text x="720" y="352" text-anchor="middle" font-size="12" fill="#e6edf3">exhaustive 256-input test</text>
+    <text x="720" y="370" text-anchor="middle" font-size="12" fill="#e6edf3">SUBLEQ vs reference vs n+1</text>
+    <text x="720" y="392" text-anchor="middle" font-size="11" fill="#8b949e">ELF round-trip, ROMHEX</text>
+    <text x="720" y="408" text-anchor="middle" font-size="11" fill="#8b949e">writes artifact/</text>
+
+    <rect x="890" y="300" width="220" height="120" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+    <text x="1000" y="328" text-anchor="middle" font-size="15" font-weight="bold" fill="#58a6ff">package.rkt</text>
+    <text x="1000" y="352" text-anchor="middle" font-size="12" fill="#e6edf3">NOVA-ELF packaging</text>
+    <text x="1000" y="370" text-anchor="middle" font-size="12" fill="#e6edf3">8 sections, self-attesting</text>
+    <text x="1000" y="392" text-anchor="middle" font-size="11" fill="#8b949e">.nova.urom digest = image</text>
+    <text x="1000" y="408" text-anchor="middle" font-size="11" fill="#8b949e">SHA-256; S-box in .rodata</text>
+
+    <line x1="1000" y1="230" x2="1000" y2="298" stroke="#d29922" stroke-width="2" marker-end="url(#arrO)"/>
+    <line x1="720" y1="230" x2="720" y2="298" stroke="#3fb950" stroke-width="2" marker-end="url(#arrG)"/>
+    <line x1="430" y1="230" x2="430" y2="298" stroke="#f85149" stroke-width="2" marker-end="url(#arrO)"/>
+    <text x="1012" y="266" font-size="11" fill="#8b949e">package</text>
+    <text x="732" y="266" font-size="11" fill="#8b949e">verify</text>
+    <text x="442" y="266" font-size="11" fill="#8b949e">prove</text>
+    <line x1="250" y1="360" x2="308" y2="360" stroke="#39c5cf" stroke-width="2" marker-end="url(#arrG)"/>
+    <line x1="550" y1="360" x2="608" y2="360" stroke="#3fb950" stroke-width="2" marker-end="url(#arrG)"/>
+    <line x1="830" y1="360" x2="888" y2="360" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- Row 3: output -->
+  <g>
+    <rect x="310" y="490" width="620" height="120" rx="8" fill="#161b22" stroke="#e6edf3" stroke-width="1.5"/>
+    <text x="620" y="518" text-anchor="middle" font-size="15" font-weight="bold" fill="#e6edf3">NOVA-ELF object — artifact/turing_increment.nova.elf</text>
+    <text x="620" y="542" text-anchor="middle" font-size="13" fill="#e6edf3">ELF64, ET_REL, e_machine 0xFF01 (EM_NOVA_SUBLEQ), 2,672 bytes</text>
+    <text x="620" y="564" text-anchor="middle" font-size="12" fill="#8b949e">.nova.text 984 B · .nova.data 120 B · .nova.rodata 256 B · .nova.urom 52 B</text>
+    <text x="620" y="584" text-anchor="middle" font-size="12" fill="#8b949e">.nova.proof 229 B · .nova.codec 15 B · .nova.dag 113 B · .note.nova 92 B · .shstrtab 102 B</text>
+    <text x="620" y="604" text-anchor="middle" font-size="11" fill="#8b949e">Load(ELF(M)) = M · increment from the ELF-loaded image: 0 mismatches / 256 inputs</text>
+    <line x1="1000" y1="420" x2="1000" y2="488" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+    <line x1="720" y1="420" x2="720" y2="488" stroke="#3fb950" stroke-width="2" marker-end="url(#arrG)"/>
+  </g>
+
+  <text x="620" y="660" text-anchor="middle" font-size="12" fill="#8b949e">Dependencies: subleq-isa-racket (machine.rkt, asm.rkt) · nova-elf (elf.rkt, codec.rkt) · Rosette / Z3 · Racket 8.15</text>
+</svg>

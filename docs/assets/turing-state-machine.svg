@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#58a6ff"/>
+    </marker>
+    <marker id="arrG" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#3fb950"/>
+    </marker>
+    <marker id="arrO" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0,0 L10,4 L0,8 Z" fill="#d29922"/>
+    </marker>
+  </defs>
+  <rect width="960" height="600" fill="#0d1117"/>
+  <text x="480" y="40" text-anchor="middle" font-size="24" font-weight="bold" fill="#e6edf3">Turing-Machine State Transitions</text>
+  <text x="480" y="66" text-anchor="middle" font-size="14" fill="#8b949e">delta(q, a) = (q′, b, d) — label: symbol read → symbol written, move</text>
+
+  <!-- scan self-loop -->
+  <path d="M 130 150 Q 200 60 270 150" fill="none" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="200" y="86" text-anchor="middle" font-size="13" fill="#58a6ff">0 → write 0, R</text>
+  <path d="M 150 158 Q 200 100 250 158" fill="none" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="200" y="128" text-anchor="middle" font-size="13" fill="#58a6ff">1 → write 1, R</text>
+
+  <!-- carry self-loop -->
+  <path d="M 410 150 Q 480 60 550 150" fill="none" stroke="#3fb950" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="480" y="86" text-anchor="middle" font-size="13" fill="#3fb950">1 → write 0, L</text>
+
+  <!-- halt self-loop -->
+  <path d="M 690 150 Q 760 60 830 150" fill="none" stroke="#8b949e" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="760" y="86" text-anchor="middle" font-size="13" fill="#8b949e">identity — no rule</text>
+
+  <!-- states -->
+  <circle cx="200" cy="220" r="70" fill="#161b22" stroke="#58a6ff" stroke-width="2.5"/>
+  <text x="200" y="214" text-anchor="middle" font-size="20" font-weight="bold" fill="#58a6ff">scan</text>
+  <text x="200" y="240" text-anchor="middle" font-size="14" fill="#e6edf3">state 0 — q₀</text>
+
+  <circle cx="480" cy="220" r="70" fill="#161b22" stroke="#3fb950" stroke-width="2.5"/>
+  <text x="480" y="214" text-anchor="middle" font-size="20" font-weight="bold" fill="#3fb950">carry</text>
+  <text x="480" y="240" text-anchor="middle" font-size="14" fill="#e6edf3">state 1</text>
+
+  <circle cx="760" cy="220" r="70" fill="#161b22" stroke="#8b949e" stroke-width="2.5"/>
+  <text x="760" y="214" text-anchor="middle" font-size="20" font-weight="bold" fill="#e6edf3">halt</text>
+  <text x="760" y="240" text-anchor="middle" font-size="14" fill="#e6edf3">state 2 — q_accept</text>
+
+  <!-- scan -> carry -->
+  <line x1="270" y1="220" x2="408" y2="220" stroke="#d29922" stroke-width="2" marker-end="url(#arrO)"/>
+  <text x="339" y="200" text-anchor="middle" font-size="13" fill="#d29922">blank → write blank, L</text>
+
+  <!-- carry -> halt (upper arc) -->
+  <path d="M 520 165 Q 620 120 720 165" fill="none" stroke="#3fb950" stroke-width="2" marker-end="url(#arrG)"/>
+  <text x="620" y="128" text-anchor="middle" font-size="13" fill="#3fb950">0 → write 1, stay</text>
+  <!-- carry -> halt (lower arc) -->
+  <path d="M 520 275 Q 620 320 720 275" fill="none" stroke="#3fb950" stroke-width="2" marker-end="url(#arrG)"/>
+  <text x="620" y="316" text-anchor="middle" font-size="13" fill="#3fb950">blank → write 1, stay</text>
+
+  <!-- start marker -->
+  <path d="M 60 220 L 128 220" stroke="#e6edf3" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="60" y="200" text-anchor="middle" font-size="13" fill="#e6edf3">start</text>
+
+  <!-- legend / table -->
+  <rect x="80" y="370" width="800" height="190" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="480" y="398" text-anchor="middle" font-size="15" font-weight="bold" fill="#e6edf3">Transition table δ — one rule per (state, symbol) pair</text>
+  <text x="120" y="432" font-size="13" fill="#58a6ff">scan,  0 → write 0, move Right, scan</text>
+  <text x="120" y="456" font-size="13" fill="#58a6ff">scan,  1 → write 1, move Right, scan</text>
+  <text x="120" y="480" font-size="13" fill="#d29922">scan,  blank → write blank, move Left, carry</text>
+  <text x="520" y="432" font-size="13" fill="#3fb950">carry, 1 → write 0, move Left, carry</text>
+  <text x="520" y="456" font-size="13" fill="#3fb950">carry, 0 → write 1, move Stay, halt</text>
+  <text x="520" y="480" font-size="13" fill="#3fb950">carry, blank → write 1, move Stay, halt</text>
+  <text x="480" y="516" text-anchor="middle" font-size="12" fill="#8b949e">Symbols: 0 = t0, 1 = t1, blank = tb (2). States: scan = 0, carry = 1, halt = 2.</text>
+  <text x="480" y="538" text-anchor="middle" font-size="12" fill="#8b949e">Head starts at tape cell 0; scan walks right to the blank past the LSB, carry walks left flipping 1s.</text>
+</svg>
