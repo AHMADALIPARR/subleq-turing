@@ -198,7 +198,7 @@ The assembler reserves four cells after the program image: `__zero` (always 0), 
 
 ## The lowering pipeline
 
-` turing-items` in `turing.rkt` returns the item list for the whole program: the main loop, the patchable triples, and the data cells. `assemble/labels` turns the list into the image and the label table. The pipeline is:
+` turing-items` in `src/turing.rkt` returns the item list for the whole program: the main loop, the patchable triples, and the data cells. `assemble/labels` turns the list into the image and the label table. The pipeline is:
 
 ```mermaid
 flowchart LR
@@ -293,14 +293,14 @@ The first cells of the image are the assembled triples of the main loop. Cell 0 
 
 | Module | Responsibility | Inputs | Outputs | Verification |
 | --- | --- | --- | --- | --- |
-| `turing.rkt` | Reference model, SUBLEQ emitter, runners, exhaustive test | 8-bit input `n` | Incremented number; assembled image; label table | Exhaustive 0/256 vs reference and vs `n+1` |
-| `rosette_check.rkt` | Symbolic proofs of the transition semantics | Symbolic 8-bit `n` | Three proof verdicts | Z3 `unsat` for each `verify` query |
-| `trace.rkt` | SUBLEQ-level Turing trace for one input | Input `n` (default 13) | Configuration per Turing step | Compared against the reference trace by inspection |
-| `measure.rkt` | Image size and dynamic step measurements | None (iterates all 256 inputs) | Cell counts, min/max/average steps | Each run asserts `got = n + 1` |
-| `package.rkt` | NOVA-ELF packaging for this image | Image, labels, digests, JSON strings | NOVA-ELF bytes; image reloaded from ELF | `Load(ELF(M)) = M` checked in `verify.rkt` |
-| `verify.rkt` | End-to-end verification and artifact packaging | None (assembles and tests) | `artifact/` package, printed checks | All checks must pass or it errors |
+| `src/turing.rkt` | Reference model, SUBLEQ emitter, runners, exhaustive test | 8-bit input `n` | Incremented number; assembled image; label table | Exhaustive 0/256 vs reference and vs `n+1` |
+| `src/rosette_check.rkt` | Symbolic proofs of the transition semantics | Symbolic 8-bit `n` | Three proof verdicts | Z3 `unsat` for each `verify` query |
+| `src/trace.rkt` | SUBLEQ-level Turing trace for one input | Input `n` (default 13) | Configuration per Turing step | Compared against the reference trace by inspection |
+| `src/measure.rkt` | Image size and dynamic step measurements | None (iterates all 256 inputs) | Cell counts, min/max/average steps | Each run asserts `got = n + 1` |
+| `src/package.rkt` | NOVA-ELF packaging for this image | Image, labels, digests, JSON strings | NOVA-ELF bytes; image reloaded from ELF | `Load(ELF(M)) = M` checked in `src/verify.rkt` |
+| `src/verify.rkt` | End-to-end verification and artifact packaging | None (assembles and tests) | `artifact/` package, printed checks | All checks must pass or it errors |
 
-### `turing.rkt`
+### `src/turing.rkt`
 
 The lowering engine and the reference model. It requires the SUBLEQ machine (`machine.rkt`) and the assembler (`asm.rkt`) from the sibling `subleq-isa-racket` project. `TAPE-CELLS` is `16`.
 
@@ -320,39 +320,39 @@ The lowering engine and the reference model. It requires the SUBLEQ machine (`ma
 (run-turing-all)       ; 0 mismatches / 256, both comparisons
 ```
 
-### `rosette_check.rkt`
+### `src/rosette_check.rkt`
 
-The symbolic proofs. It is a `#lang rosette` module; it does not import `turing.rkt`. It re-encodes the transition table and the step function as Rosette bitvector operations and asks Z3 to verify three properties. The tape is a 20-bit bitvector: 10 cells of 2 bits each, cell `i` occupying bits `[2i+1 : 2i]`. The head is a 4-bit index (`0..9`); cell `0` is the guard, cells `1..8` hold the input, cell `9` is the blank past the least-significant bit. The state is 2 bits (`0` scan, `1` carry, `2` halt). The move is 2 bits (`0` left, `1` stay, `2` right).
+The symbolic proofs. It is a `#lang rosette` module; it does not import `src/turing.rkt`. It re-encodes the transition table and the step function as Rosette bitvector operations and asks Z3 to verify three properties. The tape is a 20-bit bitvector: 10 cells of 2 bits each, cell `i` occupying bits `[2i+1 : 2i]`. The head is a 4-bit index (`0..9`); cell `0` is the guard, cells `1..8` hold the input, cell `9` is the blank past the least-significant bit. The state is 2 bits (`0` scan, `1` carry, `2` halt). The move is 2 bits (`0` left, `1` stay, `2` right).
 
 `cell-at` extracts the 2-bit cell at the head by shifting right and masking with `3`. `write-cell` clears the target cell with an inverted shifted mask and ORs the new value in. `delta` returns a list `(write move next-state)` for the six non-halt cases and a default for the unreachable else branch. `tm-step` returns the configuration unchanged at halt and otherwise applies `delta` to the current cell. `move-head` subtracts 1 for left, adds 1 for right, and leaves the head unchanged for stay.
 
 The proofs are in [Formal verification](#formal-verification).
 
-### `trace.rkt`
+### `src/trace.rkt`
 
 The SUBLEQ-level trace. `trace-one` assembles the image, loads it, writes the input bits, and steps the machine one triple at a time. Each time execution reaches the top of the main loop (`pc = step-loop`), it prints the Turing-level configuration: the step number, the state cell, the head relative to the tape base, and the tape snapshot from the guard through `tape+8`. When the machine halts it prints the result, the expected `n + 1`, and the status. The module runs `trace-one` on the command-line argument, defaulting to `13`.
 
 The trace shows the SUBLEQ program actually walking through the expected Turing configurations, not just producing the right final answer. The head in the trace is `ptr − tape-addr`, so `0..7` are the input cells, `8` is the blank past the least-significant bit, and `−1` is the guard.
 
-### `measure.rkt`
+### `src/measure.rkt`
 
 The measurements. It assembles the image once, prints the cell counts (`image cells = 276 (code 246 + data 30, data includes 4 reserved cells)`), then runs `run-turing-steps` on all 256 inputs, asserting each result equals `n + 1`, and tracks the minimum, maximum, and total step counts and the inputs that attain the extremes. It prints the min, max, and average, and states that the step count varies with the input. The measurements are in [Performance and measurement](#performance-and-measurement).
 
-### `package.rkt`
+### `src/package.rkt`
 
 The NOVA-ELF packaging for this image. It mirrors the GF packaging (`nova-elf/elf/package.rkt`) but computes the code/data split from this image's own labels instead of hardcoding the GF split. `turing-code-cells` returns the `data-start` label address; `turing-data-cells` returns the image length minus that address. `image-sha256-hex` hashes the canonical binary image — the cells serialized as 32-bit signed little-endian words — and returns the lowercase hex digest.
 
-`package-turing-image` takes the image, the labels, the image digest, and the proof and DAG JSON strings, and returns the NOVA-ELF file as bytes. It splits the image into code and data at `data-start`, builds the `.nova.urom` content (descriptor version `1`, the image digest, and the four dispatch words), and passes eight sections to `nova-elf-write`. `load-turing-image` parses a NOVA-ELF file with `nova-elf-read`, extracts `.nova.text` and `.nova.data`, converts the bytes back to cells (32-bit signed little-endian), and appends them into the flat image. Whether the loaded image equals the original is the caller's check, performed in `verify.rkt`.
+`package-turing-image` takes the image, the labels, the image digest, and the proof and DAG JSON strings, and returns the NOVA-ELF file as bytes. It splits the image into code and data at `data-start`, builds the `.nova.urom` content (descriptor version `1`, the image digest, and the four dispatch words), and passes eight sections to `nova-elf-write`. `load-turing-image` parses a NOVA-ELF file with `nova-elf-read`, extracts `.nova.text` and `.nova.data`, converts the bytes back to cells (32-bit signed little-endian), and appends them into the flat image. Whether the loaded image equals the original is the caller's check, performed in `src/verify.rkt`.
 
 Two fields differ from the GF object by design. The `.nova.urom` descriptor is self-attesting: its digest is the SHA-256 of this canonical image, and its dispatch words are `VERIFY_MANIFEST`, `LOCK_IMMUTABLE`, `EXEC_INNER` with `inner_pc = 0` (the Turing program entry), `HALT`. The GF descriptor attests the NovaDag outer-ROM manifest digest and dispatches to `inner_pc = 0x040`; this image has no outer ROM and no DAG manifest yet. The `.nova.rodata` section carries the standard AES S-box as the format's constant table. The Turing program does not use it; it is included so the object is structurally identical to the GF object for loader compatibility.
 
-### `verify.rkt`
+### `src/verify.rkt`
 
 The end-to-end verification and artifact packaging. It assembles the image, prints the cell counts and the image SHA-256, writes `artifact/turing_increment.mem` (one integer per line), runs the exhaustive 256-input test (SUBLEQ vs reference, reference vs `n + 1`), writes `artifact/evidence.txt`, packages the image as NOVA-ELF, checks the loader round-trip (`Load(ELF(M)) = M`), checks the ELF round-trips through HEX16, BASE64, and BASE32, runs the increment test from the ELF-loaded image on all 256 inputs, checks the ROMHEX round-trip, and writes the ELF, ROMHEX, HEX16, BASE64, manifest, and node record into `artifact/`. Every check is a `check` call that errors on failure; a run that completes has passed all of them. The full check list is in [Formal verification](#formal-verification).
 
 ## Machine walkthrough
 
-Three inputs, each traced by execution with `trace.rkt`. The head is reported relative to the tape base: `0..7` are the input cells, `8` is the blank past the least-significant bit, `−1` is the guard. The tape snapshot shows the guard, the 8 input cells, and the trailing blank.
+Three inputs, each traced by execution with `src/trace.rkt`. The head is reported relative to the tape base: `0..7` are the input cells, `8` is the blank past the least-significant bit, `−1` is the guard. The tape snapshot shows the guard, the 8 input cells, and the trailing blank.
 
 ### Input 13 → 14
 
@@ -461,7 +461,7 @@ Verification in this repository is two links. The SUBLEQ program is compared wit
 
 ### Rosette and Z3
 
-Rosette is a solver-aided language embedded in Racket. It lifts ordinary Racket code over symbolic values and discharges verification queries to an SMT solver — here Z3. `rosette_check.rkt` encodes the Turing machine semantics as bitvector operations, states the properties as assertions over symbolic inputs, and calls `verify`. `verify` asks Z3 whether the negation of the assertion is satisfiable. When Z3 returns `unsat`, no counterexample exists and the property holds for all inputs in the quantified domain. The three proofs run in about 1.7 seconds.
+Rosette is a solver-aided language embedded in Racket. It lifts ordinary Racket code over symbolic values and discharges verification queries to an SMT solver — here Z3. `src/rosette_check.rkt` encodes the Turing machine semantics as bitvector operations, states the properties as assertions over symbolic inputs, and calls `verify`. `verify` asks Z3 whether the negation of the assertion is satisfiable. When Z3 returns `unsat`, no counterexample exists and the property holds for all inputs in the quantified domain. The three proofs run in about 1.7 seconds.
 
 The encoding is deliberately small so the solver queries stay trivial. The tape is a 20-bit bitvector: 10 cells of 2 bits each, cell `i` occupying bits `[2i+1 : 2i]`. Cell `0` is the guard, cells `1..8` hold the input most-significant-bit first, cell `9` is the blank past the least-significant bit. The head is a 4-bit index. The state is 2 bits. The move is 2 bits (`0` left, `1` stay, `2` right). `cell-at` extracts a cell by shifting right and masking with `3`; `write-cell` clears the target cell with an inverted shifted mask and ORs the new value in. `delta` returns the triple `(write move next-state)` for the six non-halt cases. `tm-step` returns the configuration unchanged at halt and otherwise applies `delta` to the current cell.
 
@@ -481,14 +481,14 @@ One encoding detail matters: `cell-at` returns a 20-bit value, and zero-extendin
 | --- | --- | --- | --- |
 | SUBLEQ vs reference | `run-turing-all` | Exhaustive execution, all 256 inputs | 0 mismatches / 256 |
 | Reference vs `n + 1` | `run-turing-all` | Exhaustive execution, all 256 inputs | 0 mismatches / 256 |
-| Delta totality/determinism | `rosette_check.rkt`, `delta-matches-table?` | Symbolic, Z3 `unsat` | PROVED |
-| Halt is identity | `rosette_check.rkt`, `tm-step` at state 2 | Symbolic, Z3 `unsat` | PROVED |
-| Increment, all 8-bit `n` | `rosette_check.rkt`, 20 unrolled steps | Symbolic, Z3 `unsat` | PROVED |
-| ELF loader preserves image | `verify.rkt`, `load-turing-image` | Round-trip by execution | `Load(ELF(M)) = M` |
-| ELF via HEX16 / BASE64 / BASE32 | `verify.rkt`, codec round-trips | Round-trip by execution | Decode(encode(ELF)) = ELF |
-| Increment from ELF-loaded image | `verify.rkt` | Exhaustive execution, all 256 inputs | 0 mismatches / 256 |
-| ROMHEX round-trip | `verify.rkt`, `nova-romhex-encode`/`decode` | Round-trip by execution | Decode(encode(cells)) = cells |
-| Step-count model | `measure.rkt`, `run-turing-steps` | Execution over all 256 inputs | min 247, max 580, avg `39153/128` |
+| Delta totality/determinism | `src/rosette_check.rkt`, `delta-matches-table?` | Symbolic, Z3 `unsat` | PROVED |
+| Halt is identity | `src/rosette_check.rkt`, `tm-step` at state 2 | Symbolic, Z3 `unsat` | PROVED |
+| Increment, all 8-bit `n` | `src/rosette_check.rkt`, 20 unrolled steps | Symbolic, Z3 `unsat` | PROVED |
+| ELF loader preserves image | `src/verify.rkt`, `load-turing-image` | Round-trip by execution | `Load(ELF(M)) = M` |
+| ELF via HEX16 / BASE64 / BASE32 | `src/verify.rkt`, codec round-trips | Round-trip by execution | Decode(encode(ELF)) = ELF |
+| Increment from ELF-loaded image | `src/verify.rkt` | Exhaustive execution, all 256 inputs | 0 mismatches / 256 |
+| ROMHEX round-trip | `src/verify.rkt`, `nova-romhex-encode`/`decode` | Round-trip by execution | Decode(encode(cells)) = cells |
+| Step-count model | `src/measure.rkt`, `run-turing-steps` | Execution over all 256 inputs | min 247, max 580, avg `39153/128` |
 
 ### What the checks do and do not establish
 
@@ -597,11 +597,11 @@ The image's first cell is `251` (`0xfb`), the `A` operand of the first `clr` tri
 
 ### Loader contract
 
-`load-turing-image` parses the ELF with `nova-elf-read`, which verifies the magic, the ELF64 class, the little-endian data encoding, and the `e_machine` value `0xFF01`, then reads the section headers and the `.shstrtab` to resolve section names. It extracts `.nova.text` and `.nova.data`, converts the bytes back to cells (32-bit signed little-endian, 4 bytes per cell), and appends them into the flat image. The loader does not check the digest; the caller checks `Load(ELF(M)) = M` by comparing the loaded image with the original, and `verify.rkt` does exactly that. The loaded image then runs the increment test on all 256 inputs with 0 mismatches, so the packaged object preserves both the bits and the behavior.
+`load-turing-image` parses the ELF with `nova-elf-read`, which verifies the magic, the ELF64 class, the little-endian data encoding, and the `e_machine` value `0xFF01`, then reads the section headers and the `.shstrtab` to resolve section names. It extracts `.nova.text` and `.nova.data`, converts the bytes back to cells (32-bit signed little-endian, 4 bytes per cell), and appends them into the flat image. The loader does not check the digest; the caller checks `Load(ELF(M)) = M` by comparing the loaded image with the original, and `src/verify.rkt` does exactly that. The loaded image then runs the increment test on all 256 inputs with 0 mismatches, so the packaged object preserves both the bits and the behavior.
 
 ## Performance and measurement
 
-`measure.rkt` reports the image size and the dynamic step counts over all 256 inputs. It assembles the image once, then runs `run-turing-steps` on every input, asserting each result equals `n + 1`, and tracks the minimum, maximum, and total step counts and the inputs that attain the extremes.
+`src/measure.rkt` reports the image size and the dynamic step counts over all 256 inputs. It assembles the image once, then runs `run-turing-steps` on every input, asserting each result equals `n + 1`, and tracks the minimum, maximum, and total step counts and the inputs that attain the extremes.
 
 | Metric | Value |
 | --- | --- |
@@ -617,7 +617,7 @@ The image's first cell is `251` (`0xfb`), the `A` operand of the first `clr` tri
 | Turing steps, `n = 0` | 10 |
 | Turing steps, `n = 255` | 18 |
 | Rosette proof time | ≈ 1.7 s for all three proofs |
-| `verify.rkt` runtime | ≈ 2.4 s end to end |
+| `src/verify.rkt` runtime | ≈ 2.4 s end to end |
 
 ### Step-count model
 
@@ -650,7 +650,7 @@ The step count varies with the input because the scan length and the carry lengt
 | Requirement | Purpose |
 | --- | --- |
 | Racket | Runs all six modules |
-| Rosette and its solver dependencies | Runs `rosette_check.rkt` (needs Z3) |
+| Rosette and its solver dependencies | Runs `src/rosette_check.rkt` (needs Z3) |
 | `../subleq-isa-racket` | Sibling checkout: the SUBLEQ machine and assembler |
 | `../nova-elf` | Sibling checkout: the NOVA-ELF writer, codec, and package modules |
 
@@ -669,26 +669,26 @@ From the repository root:
 
 ```sh
 # Run the end-to-end checks and regenerate artifact/.
-racket verify.rkt
+racket src/verify.rkt
 
 # Run the symbolic checks.
-racket rosette_check.rkt
+racket src/rosette_check.rkt
 
 # Measure image size and SUBLEQ steps across all inputs.
-racket measure.rkt
+racket src/measure.rkt
 
 # Trace an input (defaults to 13).
-racket trace.rkt
-racket trace.rkt 255
+racket src/trace.rkt
+racket src/trace.rkt 255
 ```
 
 To invoke the exhaustive comparison helper directly:
 
 ```sh
-racket -e '(require "turing.rkt") (run-turing-all)'
+racket -e '(require "src/turing.rkt") (run-turing-all)'
 ```
 
-`verify.rkt` writes generated files into `artifact/`, replacing files with the same names. `trace.rkt` prints the Turing-level configurations for one input; `measure.rkt` prints the image size and the step statistics over all 256 inputs; `rosette_check.rkt` prints the three proof verdicts.
+`src/verify.rkt` writes generated files into `artifact/`, replacing files with the same names. `src/trace.rkt` prints the Turing-level configurations for one input; `src/measure.rkt` prints the image size and the step statistics over all 256 inputs; `src/rosette_check.rkt` prints the three proof verdicts.
 
 ## Repository structure
 
@@ -723,12 +723,12 @@ subleq-turing/
 
 | Path | Purpose |
 | --- | --- |
-| [`turing.rkt`](turing.rkt) | Turing reference model, SUBLEQ program construction, runners, and exhaustive comparison helper |
-| [`rosette_check.rkt`](rosette_check.rkt) | Rosette/Z3 checks of the transition semantics, halt behavior, and increment property |
-| [`verify.rkt`](verify.rkt) | End-to-end test, NOVA-ELF packaging, codec round-trips, and artifact generation |
-| [`trace.rkt`](trace.rkt) | Prints the Turing-level configurations encountered for one input (defaults to `13`) |
-| [`measure.rkt`](measure.rkt) | Reports image layout and SUBLEQ step counts over all 256 inputs |
-| [`package.rkt`](package.rkt) | Converts the image to and from NOVA-ELF sections |
+| [`src/turing.rkt`](turing.rkt) | Turing reference model, SUBLEQ program construction, runners, and exhaustive comparison helper |
+| [`src/rosette_check.rkt`](rosette_check.rkt) | Rosette/Z3 checks of the transition semantics, halt behavior, and increment property |
+| [`src/verify.rkt`](verify.rkt) | End-to-end test, NOVA-ELF packaging, codec round-trips, and artifact generation |
+| [`src/trace.rkt`](trace.rkt) | Prints the Turing-level configurations encountered for one input (defaults to `13`) |
+| [`src/measure.rkt`](measure.rkt) | Reports image layout and SUBLEQ step counts over all 256 inputs |
+| [`src/package.rkt`](package.rkt) | Converts the image to and from NOVA-ELF sections |
 | [`artifact/`](artifact/) | Generated image, proof evidence, NOVA-ELF object and encodings, manifest, and node record |
 | [`docs/assets/`](docs/assets/) | Architecture diagrams (SVG) |
 | [`STATUS.md`](STATUS.md) | Detailed design notes, verification evidence, and limitations |

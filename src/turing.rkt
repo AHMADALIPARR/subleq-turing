@@ -50,8 +50,8 @@
 ;;   wr-op : tape[ptr] <- 1             (B operand patched with ptr;
 ;;                                        A is tmp2 holding -1, cell pre-cleared)
 
-(require "../subleq-isa-racket/subleq/machine.rkt"
-         "../subleq-isa-racket/subleq/asm.rkt")
+(require "../../subleq-isa-racket/subleq/machine.rkt"
+         "../../subleq-isa-racket/subleq/asm.rkt")
 
 (provide tm-step-ref
          turing-run-ref

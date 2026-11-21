@@ -31,9 +31,9 @@
          turing-data-cells)
 
 (require "turing.rkt"
-         "../nova-elf/elf/elf.rkt"
-         "../nova-elf/elf/codec.rkt"
-         "../subleq-isa-racket/subleq/asm.rkt"
+         "../../nova-elf/elf/elf.rkt"
+         "../../nova-elf/elf/codec.rkt"
+         "../../subleq-isa-racket/subleq/asm.rkt"
          file/sha1)
 
 ;; Code cells: everything before the first data label. Data cells: the

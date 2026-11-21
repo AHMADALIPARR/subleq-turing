@@ -64,7 +64,7 @@ test passed.
   program is NOT constant-trace (scan and carry lengths are
   data-dependent). The v1 is the exhaustively tested baseline.
 
-## Rosette/Z3 proofs (rosette_check.rkt, ~1 second)
+## Rosette/Z3 proofs (src/rosette_check.rkt, ~1 second)
 
 - delta totality/determinism: PROVED. For every non-halt state (scan,
   carry) and every symbol (0, 1, blank) there is exactly one rule, and
@@ -124,22 +124,22 @@ structurally identical to the GF object for loader compatibility.
 
 ## Files
 
-- `turing.rkt` — reference model, SUBLEQ emitter, runner, exhaustive test.
-- `rosette_check.rkt` — Rosette/Z3 proofs (delta, halt, increment).
-- `trace.rkt` — SUBLEQ-level Turing trace for one input (default 13).
-- `measure.rkt` — image size and step-count measurements.
-- `package.rkt` — NOVA-ELF packaging for this image (generalized split).
-- `verify.rkt` — end-to-end verification and artifact packaging.
+- `src/turing.rkt` — reference model, SUBLEQ emitter, runner, exhaustive test.
+- `src/rosette_check.rkt` — Rosette/Z3 proofs (delta, halt, increment).
+- `src/trace.rkt` — SUBLEQ-level Turing trace for one input (default 13).
+- `src/measure.rkt` — image size and step-count measurements.
+- `src/package.rkt` — NOVA-ELF packaging for this image (generalized split).
+- `src/verify.rkt` — end-to-end verification and artifact packaging.
 - `artifact/` — generated artifacts (image, evidence, ELF, ROMHEX,
   encodings, manifest, node record).
 - `LICENSE` — SNAPKITTY OPAQUE SOURCE LICENSE v1.0.
 
 ## Reproduce
 
-- `racket turing.rkt` loads the module; `(run-turing-all)` runs the
+- `racket src/turing.rkt` loads the module; `(run-turing-all)` runs the
   exhaustive 256-input test.
-- `racket measure.rkt` prints image size and step statistics.
-- `racket trace.rkt [n]` prints the Turing-level trace for input n.
-- `racket rosette_check.rkt` runs the three Rosette/Z3 proofs.
-- `racket verify.rkt` runs everything and regenerates `artifact/`.
+- `racket src/measure.rkt` prints image size and step statistics.
+- `racket src/trace.rkt [n]` prints the Turing-level trace for input n.
+- `racket src/rosette_check.rkt` runs the three Rosette/Z3 proofs.
+- `racket src/verify.rkt` runs everything and regenerates `artifact/`.
   Racket is at `~/workspace/.tools/racket/bin/racket`.

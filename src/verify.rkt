@@ -23,10 +23,10 @@
 
 (require "turing.rkt"
          "package.rkt"
-         "../nova-elf/elf/elf.rkt"
-         "../nova-elf/elf/codec.rkt"
-         "../subleq-isa-racket/subleq/machine.rkt"
-         "../subleq-isa-racket/subleq/asm.rkt"
+         "../../nova-elf/elf/elf.rkt"
+         "../../nova-elf/elf/codec.rkt"
+         "../../subleq-isa-racket/subleq/machine.rkt"
+         "../../subleq-isa-racket/subleq/asm.rkt"
          file/sha1)
 
 (define (check name actual expected)
@@ -172,7 +172,7 @@
 (define evidence-hex (sha256-hex (file->bytes "artifact/evidence.txt")))
 (define node-json
   (format
-   "{\"artifact\":{\"evidence\":\"artifact/evidence.txt\",\"evidence_sha256\":\"~a\",\"image\":\"artifact/turing_increment.mem\",\"image_cells\":~a,\"image_sha256\":\"~a\"},\"field\":{\"states\":3,\"symbols\":3,\"tape_cells\":16},\"id\":\"turing.increment.v1\",\"kind\":\"implementation\",\"language\":\"SUBLEQ\",\"operation\":\"increment\",\"parameters\":{\"input_bits\":8,\"output_bits\":9,\"word_bits\":32},\"parents\":[\"fibonacci-engine:elf/transitions/turing.elf\"],\"schema\":\"rijndael.dag.v1\",\"source\":\"subleq-turing/turing.rkt\",\"transformation\":{\"engine\":\"racket\",\"name\":\"lower-turing-to-subleq\",\"revision\":1},\"verification\":{\"evidence\":[\"artifact/turing_increment.mem: sha256 ~a\",\"artifact/evidence.txt: sha256 ~a\",\"exhaustive: 0 mismatches / 256 inputs (SUBLEQ vs turing-increment-ref)\",\"reference: 0 mismatches / 256 inputs (turing-increment-ref vs n+1)\",\"rosette: delta totality/determinism PROVED, halt-is-identity PROVED, increment-for-all-8-bit-n PROVED\"],\"obligations\":[\"turing_equivalence\",\"loop_termination\",\"instruction_semantics\",\"hardware_refinement\"],\"status\":\"proved\",\"tool\":\"racket-exhaustive+rosette\"}}"
+   "{\"artifact\":{\"evidence\":\"artifact/evidence.txt\",\"evidence_sha256\":\"~a\",\"image\":\"artifact/turing_increment.mem\",\"image_cells\":~a,\"image_sha256\":\"~a\"},\"field\":{\"states\":3,\"symbols\":3,\"tape_cells\":16},\"id\":\"turing.increment.v1\",\"kind\":\"implementation\",\"language\":\"SUBLEQ\",\"operation\":\"increment\",\"parameters\":{\"input_bits\":8,\"output_bits\":9,\"word_bits\":32},\"parents\":[\"fibonacci-engine:elf/transitions/turing.elf\"],\"schema\":\"rijndael.dag.v1\",\"source\":\"subleq-turing/src/turing.rkt\",\"transformation\":{\"engine\":\"racket\",\"name\":\"lower-turing-to-subleq\",\"revision\":1},\"verification\":{\"evidence\":[\"artifact/turing_increment.mem: sha256 ~a\",\"artifact/evidence.txt: sha256 ~a\",\"exhaustive: 0 mismatches / 256 inputs (SUBLEQ vs turing-increment-ref)\",\"reference: 0 mismatches / 256 inputs (turing-increment-ref vs n+1)\",\"rosette: delta totality/determinism PROVED, halt-is-identity PROVED, increment-for-all-8-bit-n PROVED\"],\"obligations\":[\"turing_equivalence\",\"loop_termination\",\"instruction_semantics\",\"hardware_refinement\"],\"status\":\"proved\",\"tool\":\"racket-exhaustive+rosette\"}}"
    evidence-hex (length image) image-hex image-hex evidence-hex))
 (call-with-output-file "artifact/turing.increment.v1.json"
   #:exists 'replace

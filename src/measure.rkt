@@ -11,8 +11,8 @@
 ;; evidence for that. The v1 is the exhaustively tested baseline.
 
 (require "turing.rkt"
-         "../subleq-isa-racket/subleq/machine.rkt"
-         "../subleq-isa-racket/subleq/asm.rkt")
+         "../../subleq-isa-racket/subleq/machine.rkt"
+         "../../subleq-isa-racket/subleq/asm.rkt")
 
 (define-values (image labels) (assemble/labels (turing-items)))
 (define code-cells (hash-ref labels 'data-start))

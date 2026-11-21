@@ -11,8 +11,8 @@
 ;; answer. Default input is 13 (00001101 -> 00001110 = 14).
 
 (require "turing.rkt"
-         "../subleq-isa-racket/subleq/machine.rkt"
-         "../subleq-isa-racket/subleq/asm.rkt")
+         "../../subleq-isa-racket/subleq/machine.rkt"
+         "../../subleq-isa-racket/subleq/asm.rkt")
 
 (define (trace-one n)
   (define-values (image labels) (assemble/labels (turing-items)))
